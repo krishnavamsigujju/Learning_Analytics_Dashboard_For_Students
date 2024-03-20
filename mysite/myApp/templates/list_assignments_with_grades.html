@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h2>Assignments List</h2>
+{% for assignment in assignments_list %}
+    <p>Student Id: {{ assignment.student_id}}</p>
+    <p>Assignment: {{ assignment.assignment_name }}</p>
+    <p>Grade: {{ assignment.grade }}</p>
+    <!--<p>Submission: {{ assignment}}</p> -->
+    <hr>
+{% endfor %}
+</body>
+</html>

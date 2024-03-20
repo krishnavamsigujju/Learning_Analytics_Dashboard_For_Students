@@ -1,0 +1,53 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<body>-->
+<!--<h2>Assignments Submission List</h2>-->
+<!--{% for assignment_group in all_assignment_details %}-->
+<!--    <p>Assignment Group name: {{assignment_group.group_name}}</p>-->
+<!--    {% for assignment in assignment_group.assignments%}-->
+<!--        <p>Assignment name: {{assignment.name}}</p>-->
+<!--        <p>Due at: {{assignment.due_at}}</p>-->
+<!--    {% endfor %}-->
+<!--        <p>Past Assignments: {{assignment_group.past_assignments}}</p>-->
+<!--        <p>Current week Assignments: {{assignment_group.current_week_assignments}}</p>-->
+<!--        <p>Future Assignments: {{assignment_group.future_assignments}}</p>-->
+<!--    <hr>-->
+<!--{% endfor %}-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h2>Assignments Submission List</h2>
+{% for assignment_group in all_assignment_details %}
+    <p>Assignment Group name: {{ assignment_group.group_name }}</p>
+
+    <p>Past Assignments:</p>
+    <ul>
+        {% for assignment in assignment_group.past_assignments %}
+            <li>Assignment name: {{ assignment.name }}</li>
+            <li>Due at: {{ assignment.due_at }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>Current week Assignments:</p>
+    <ul>
+        {% for assignment in assignment_group.current_week_assignments %}
+            <li>Assignment name: {{ assignment.name }}</li>
+            <li>Due at: {{ assignment.due_at }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>Future Assignments:</p>
+    <ul>
+        {% for assignment in assignment_group.future_assignments %}
+            <li>Assignment name: {{ assignment.name }}</li>
+            <li>Due at: {{ assignment.due_at }}</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+{% endfor %}
+</body>
+</html>

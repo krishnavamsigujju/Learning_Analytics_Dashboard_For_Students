@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h2>Assignments Submission List</h2>
+{% for assignment in assignments_list %}
+    <p>Assignment Name: {{assignment.assignment_name}}</p>
+    <p>Submission: {{ assignment.submissions}}</p>
+    <hr>
+{% endfor %}
+</body>
+</html>
