@@ -64,7 +64,8 @@ Go to Home in your course.
 Create a new module or select an existing one.
 Click the + icon to add an item, select External Tool, then choose the app you just created.
 Click Add Item.
-# Using the Dashboard
+
+**Using the Dashboard
 After setting up the LTI tool in Canvas, navigate to the module where you added the tool.
 You will see an option to "Load LTI Application in New Window".
 Click on it to open your LAD URL. This will automatically trigger the feature that sends reminder messages to students' inboxes.
