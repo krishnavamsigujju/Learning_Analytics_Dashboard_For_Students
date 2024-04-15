@@ -19,7 +19,7 @@ The Learning Analytics Dashboard for Students leverages learning analytics to pr
   - Aiming to create a page that displays all course grades in one convenient location, potentially including a GPA estimator. This development is intended to simplify academic tracking and planning for students.
 
 
-### Installation
+### Installation and Running
 
 This section provides the steps to install the "Upcoming Assignment Reminders" feature of the Learning Analytics Dashboard. Follow these instructions to set up this feature on your local machine:
 
