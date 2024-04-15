@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+<h1>Assignment Due Dates</h1>
+</head>
+<body>
+<ul>
+    {% for assignments in assignments_data %}
+        <p>Name: {{assignments.name}}</p>
+        <p>Due Date: {{assignments.due_at}}</p>
+        <hr>
+    {% endfor %}
+</ul>
+</body>
+</html>

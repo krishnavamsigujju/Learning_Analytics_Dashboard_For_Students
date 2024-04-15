@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <h1>Qizzes</h1>
+</head>
+<body>
+<ul>
+{% for quiz in quizzes_with_multiple_attempts%}
+   <!-- <p>Title: {{quiz.title}}</p>
+    <p>Attempts Allowed: {{quiz.allowed_attempts}}</p> -->
+    <p>{{quiz}}</p>
+    <hr>
+{% endfor %}
+</ul>
+</body>
+</html>
