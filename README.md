@@ -1,7 +1,5 @@
 # Learning_Analytics_Dashboard_For_Students
 
-# Learning_Analytics_Dashboard_For_Students
-
 This repository hosts the source code for one of the three planned developments of the Learning Analytics Dashboard (LAD) at Colorado State University, along with associated academic materials including a published paper and a project poster. The dashboard is designed to enhance student engagement, motivation, and academic performance by providing personalized feedback, sophisticated data visualization, and goal-setting mechanisms.
 
 ## Overview
