@@ -24,7 +24,7 @@ The Learning Analytics Dashboard for Students leverages learning analytics to pr
 This section provides the steps to install the "Upcoming Assignment Reminders" feature of the Learning Analytics Dashboard. Follow these instructions to set up this feature on your local machine:
 
 
-# Clone the Repository
+**Clone the Repository
 git clone https://github.com/krishnavamsigujju/Learning_Analytics_Dashboard_For_Students.git
 
 cd Learning_Analytics_Dashboard_For_Students
@@ -32,13 +32,13 @@ cd Learning_Analytics_Dashboard_For_Students
 
 ## Installation
 Create a Python virtual environment to manage dependencies:
-# Create a virtual environment (ensure Python3 is installed)
+Create a virtual environment (ensure Python3 is installed)
 python3 -m venv venv
 
-# Activate the virtual environment
+**Activate the virtual environment
 source venv/bin/activate
 
-# Install Necessary Packages
+**Install Necessary Packages
 Install the required Python packages using pip:
 pip3 install django
 pip3 install django-sslserver
@@ -49,7 +49,7 @@ pip3 install canvasapi
 Run the dashboard using the Django development server over HTTPS:
 sudo python ./manage.py runsslserver 127.0.0.1:1031
 
-# Setting Up the Canvas LTI Application
+**Setting Up the Canvas LTI Application
 Open your account on Canvas: Go to Canvas.
 Create an Endpoint:
 Navigate to your course in Canvas.
