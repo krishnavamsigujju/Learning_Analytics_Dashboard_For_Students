@@ -26,6 +26,7 @@ This section provides the steps to install the "Upcoming Assignment Reminders" f
 
 ## Clone the Repository
 git clone https://github.com/krishnavamsigujju/Learning_Analytics_Dashboard_For_Students.git
+
 cd Learning_Analytics_Dashboard_For_Students
 
 
