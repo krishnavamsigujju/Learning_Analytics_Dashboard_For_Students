@@ -26,59 +26,6 @@ headers = {
         'Authorization': 'Bearer 7~riKce9ULcCYoj5kH8TNzXEOnW0F2vS7Xv9tW5xHf4HMtHUX4NRxx6HWSPkeLDzkE'
     }
 
-def send_message_to_student(student_id,message):
-    url = API_URL+f'/api/v1/conversations#filter=type=inbox'
-    data = {
-        'recipients[]': f'{student_id}',
-        'subject': 'Reminder to complete assignment!',
-        'body': message,      
-    }
-
-    print('data: '+ str(data))
-
-    response = requests.post(url, headers=headers, data=data)
-    print("response sent:",response)
-
-    if response.status_code != 201:
-        return 0
-    else:
-        return 1
-    
-    
-
-def send_reminder_if_due_soon(student_id, due_date):
-    """
-    Sends a reminder to the student if the assignment is due within the next 24 hours.
-
-    Parameters:
-    - student_id: The ID of the student to send the reminder to.
-    - due_date: The due date of the assignment as a datetime object.
-    """
-    print("entered into this method")
-    print(student_id)
-    # Calculate the time 24 hours before the due date
-    reminder_time = due_date - timedelta(days=1)
-    # Get the current time
-    # current_time = datetime.now(timezone.utc)
-    current_time = datetime.now(utc)
-    # current_time = datetime.now(pytz.utc)
-    print(due_date.tzinfo) 
-    print(current_time.tzinfo)
-
-    # Check if the current time is within 24 hours of the due date
-    if current_time >= reminder_time and current_time < due_date:
-        # Construct the message
-        message = "Dear Student, This is a gentle reminder to complete your assignment.  Please submit it by tomorrow."
-        send_message_to_student(student_id, message)
-
-        print(f"Reminder sent to student {student_id}: {message}")
-
-def get_assignments(course_id):
-    api_url = f"https://canvas.instructure.com/api/v1/courses/{course_id}/assignments"
-    response = requests.get(api_url, headers=headers)
-    return response.json()
-
-
 def index(request):
     print("method entered")
     # Canvas API URL
@@ -87,88 +34,160 @@ def index(request):
     API_URL = "https://canvas.instructure.com/"
     API_KEY = '7~riKce9ULcCYoj5kH8TNzXEOnW0F2vS7Xv9tW5xHf4HMtHUX4NRxx6HWSPkeLDzkE'  # Replace with your own Canvas
 
-    try:
-        # Initialize a new Canvas object
-        canvas = Canvas(API_URL, API_KEY)
-        print("called to API")
-        # course_id = request.POST["custom_course_id"]
-        # print("course_id is",course_id)
-        # Get the course by course ID
-        course = canvas.get_course(7960598)
-        print(course)
-        # Get a list of users in the course 
-        users = course.get_users(enrollment_type=['student'], per_page=100)  # Adjust per_page as needed
-        
-        print("users retreived are", users)
-        
-        
-        
-        # for user in users:
-        #     # student_email = get_student_email(course, user.id)
-        #     message = "This is a test notification from your course."
-        # send_message_to_student(111257313)
-        response_message = f"Welcomeee user: {request.POST['custom_course_id']} to the course with id: {request.POST['custom_user_id']}<br>"
-        for user in users:
-            
-            user_assignments = get_assignments(7960598) 
-            print("user assignmants printing")
-            # just print the name of the user_assignment
-            if user_assignments:
-                assignments_url=f"https://canvas.instructure.com/api/v1/courses/{course_id}/assignments/{user_assignments[0]['id']}"
-                # print("assignment url is", assignments_url)
-                assignments_response = requests.get(assignments_url, headers=headers)
-                # print("assignment response is", assignments_response)
-                assignments = assignments_response.json()
-                # print(assignments)
-                due_at = assignments['due_at']
-                due_date = parser.parse(due_at).astimezone(utc)
-                print("user is", user.id)
-                send_reminder_if_due_soon(user.id,due_date)
-                response_message += f"Notification send to User: {user.name}<br>"
-                
-                
-                
-        # due_date = parser.parse(due_at)
-        # due_date = datetime.strptime(due_at, '%Y-%m-%dT%H:%M:%SZ')
-        
-        # due_date = due_at.replace(tzinfo=None)
-            # print("assignments retreiived", assignments)
-            # print("due date is",due_date)
-            # send_reminder_if_due_soon(111257313, due_date)
-        
-        
+    grades, average_gpa = get_my_grades_and_calculate_gpa()
+    response_message = ""
+    for grade in grades:
+        response_message += f"Course: {grade['course_name']}, Current Score: {grade['current_score']}, Letter Grade: {grade['letter_grade']}, GPA: {grade['GPA']}<br>"
 
-        # response_message = "Notifications sent to all students."
-        # response_message = f"Welcomeee user: {request.POST['custom_course_id']} to the course with id: {request.POST['custom_user_id']}<br>"
-
-        # for user in users:
-        #     response_message += f"User: {user.name}<br>"
-
-        #     # Get the list of assignments for the user in the course
-        #     user_assignments = user.get_assignments(course.id, per_page=100)  # Adjust per_page as needed
-
-        #     if user_assignments:
-        #         response_message += "Assignments:<br>"
-        #         for assignment in user_assignments:
-        #             response_message += f"- Assignment: {assignment.name}<br>"
-        #             submission = assignment.get_submission(user)
-        #             if submission and submission.workflow_state == 'submitted':
-        #                 response_message += "  - Submission: Submitted<br>"
-        #             else:
-        #                 response_message += "  - Submission: Not Submitted<br>"
-        #     else:
-        #         response_message += "No assignments found for this user in the course.<br>"
-                
-
-        #     assignments = course.get_assignments()
-
-            
-            
-            
-    except Exception as e:
-        response_message = f"An error occurred: {str(e)}<br>"
-
-    # Always return an HttpResponse
+    response_message += f"Average GPA: {average_gpa}<br>"
+    print(response_message)
+    
+ 
     return HttpResponse(response_message)
 
+# Function to get grades for a student in all courses
+# def get_my_grades():
+#     API_URL = "https://canvas.instructure.com/"
+#     API_KEY = '7~riKce9ULcCYoj5kH8TNzXEOnW0F2vS7Xv9tW5xHf4HMtHUX4NRxx6HWSPkeLDzkE'  # Replace with your own Canvas
+#     canvas = Canvas(API_URL, API_KEY)
+#     user = canvas.get_user('self')
+#     # course = canvas.get_course(7960598)
+#     courses = user.get_courses(enrollment_state='active')
 
+#     # users = course.get_users(enrollment_type=['student'], per_page=100) 
+#     grades_info = []
+
+#     for course in courses:
+#         enrollments = course.get_enrollments(user_id='self', type=['StudentEnrollment'])
+#         for enrollment in enrollments:
+#             if 'grades' in enrollment.__dict__:
+#                 course_name = course.name
+#                 grades = enrollment.grades
+#                 current_score = grades.get('current_score', 'No current score')
+#                 final_score = grades.get('final_score', 'No final score')
+#                 grade_info = {
+#                     'course_name': course_name,
+#                     'current_score': current_score,
+#                     'final_score': final_score
+#                 }
+#                 grades_info.append(grade_info)
+
+#     return grades_info
+
+def score_to_grade(score):
+    if score is None:
+        return 'F'
+    elif score >= 90:
+        return 'A'
+    elif score >= 87:
+        return 'A-'
+    elif score >= 83:
+        return 'B+'
+    elif score >= 80:
+        return 'B'
+    elif score >= 77:
+        return 'B-'
+    elif score >= 73:
+        return 'C+'
+    elif score >= 70:
+        return 'C'
+    elif score >= 67:
+        return 'C-'
+    elif score >= 63:
+        return 'D+'
+    elif score >= 60:
+        return 'D'
+    elif score >= 57:
+        return 'D-'
+    else:
+        return 'F'
+
+# GPA values
+grade_to_gpa = {
+    'A+': 4.0, 'A': 4.0, 'A-': 3.667,
+    'B+': 3.334, 'B': 3.0, 'B-': 2.667,
+    'C+': 2.334, 'C': 2.0, 'C-': 1.667,
+    'D+': 1.334, 'D': 1.0, 'D-': 0.667,
+    'F': 0.0
+}
+
+# def get_my_grades_and_average():
+#     API_URL = "https://canvas.instructure.com/"
+#     API_KEY = '7~riKce9ULcCYoj5kH8TNzXEOnW0F2vS7Xv9tW5xHf4HMtHUX4NRxx6HWSPkeLDzkE'  # Replace with your own Canvas
+#     canvas = Canvas(API_URL, API_KEY)
+#     user = canvas.get_user('self')  # Using 'self' to refer to the authenticated user
+#     courses = user.get_courses(enrollment_state='active')  # Fetch only active courses
+#     grades_info = []
+
+#     total_current_score = 0
+#     total_final_score = 0
+#     count_current_score = 0
+#     count_final_score = 0
+
+#     for course in courses:
+#         enrollments = course.get_enrollments(user_id='self', type=['StudentEnrollment'])
+#         for enrollment in enrollments:
+#             if 'grades' in enrollment.__dict__:
+#                 course_name = course.name
+#                 grades = enrollment.grades
+#                 current_score = grades.get('current_score')
+#                 final_score = grades.get('final_score')
+
+#                 if current_score is not None:
+#                     total_current_score += current_score
+#                     count_current_score += 1
+                
+#                 if final_score is not None:
+#                     total_final_score += final_score
+#                     count_final_score += 1
+
+#                 grade_info = {
+#                     'course_name': course_name,
+#                     'current_score': current_score,
+#                     'final_score': final_score
+#                 }
+#                 grades_info.append(grade_info)
+
+#     average_current_score = total_current_score / count_current_score if count_current_score > 0 else "No scores available"
+#     average_final_score = total_final_score / count_final_score if count_final_score > 0 else "No scores available"
+    
+#     return grades_info, average_current_score, average_final_score
+
+
+def get_my_grades_and_calculate_gpa():
+    API_URL = "https://canvas.instructure.com/"
+    API_KEY = '7~riKce9ULcCYoj5kH8TNzXEOnW0F2vS7Xv9tW5xHf4HMtHUX4NRxx6HWSPkeLDzkE'  # Replace with your own Canvas
+    canvas = Canvas(API_URL, API_KEY)
+    user = canvas.get_user('self')  # Using 'self' to refer to the authenticated user
+    courses = user.get_courses(enrollment_state='active')  # Fetch only active courses
+    grades_info = []
+    total_gpa = 0
+    count_courses = 0
+
+    for course in courses:
+        enrollments = course.get_enrollments(user_id='self', type=['StudentEnrollment'])
+        for enrollment in enrollments:
+            if 'grades' in enrollment.__dict__:
+                course_name = course.name
+                grades = enrollment.grades
+                current_score = grades.get('current_score')
+                letter_grade = score_to_grade(current_score)
+                gpa = grade_to_gpa[letter_grade]
+                
+                if current_score is not None or current_score is None:
+                    total_gpa += gpa
+                    count_courses += 1
+
+                grade_info = {
+                    'course_name': course_name,
+                    'current_score': current_score,
+                    'letter_grade': letter_grade,
+                    'GPA': gpa
+                }
+                grades_info.append(grade_info)
+
+    print(total_gpa)
+    print(count_courses)
+    average_gpa = total_gpa / count_courses if count_courses > 0 else "No valid grades available"
+    
+    return grades_info, average_gpa
